@@ -164,7 +164,10 @@ int insertPolicyalarm(const char *message,
             values('%s', %d, %d, str_to_date('%s', '%%Y-%%m-%%d %%H:%%i:%%s'), %d, %d,%d,%d)",
             message, icount, nDeviceID, firstoccur, kpiid, isclose, isopen, alarmLevelId);
 
+#ifdef __MYSQL_DEBUG__
     printf("[policyalarm]:%s\n", szSql);
+#endif //__MYSQL_DEBUG__
+
     if(0 != mysql_query(mysql, szSql))
     {
         const char *szError = mysql_error(mysql);
@@ -204,7 +207,10 @@ int insertKpidataint(int deviceid, int kpiid, double value, const char *szTime, 
     sprintf(szSql, "insert into kpidataint(deviceid, kpiid, value, \
             ydate, instance) values(%d, %d, %.8lf, str_to_date('%s', '%%Y-%%m-%%d %%H:%%i:%%s'), '%s')", nDeviceID, kpiid,
             value, szCurrentTime, szInstance);
+
+#ifdef __MYSQL_DEBUG__
     printf("%s\n", szSql);
+#endif //__MYSQL_DEBUG__
 
     if(0 != mysql_query(mysql, szSql))
     {
@@ -251,8 +257,10 @@ int insertKpidatachar(int deviceid, int kpiid, const char *value, const char *sz
     int nDeviceID = getDeviceID();
     sprintf(szSql, "insert into kpidatachar(deviceid, kpiid, value, ydate, instance) \
             values(%d, %d, '%s', str_to_date('%s','%%Y-%%m-%%d %%H:%%i:%%s'), '%s')", nDeviceID, kpiid, value, szCurrentTime, instance);
-
+#ifdef __MYSQL_DEBUG__
             printf("%s\n", szSql);
+#endif //__MYSQL_DEBUG__
+
             if(0 != mysql_query(mysql, szSql))
     {
         const char *szError = mysql_error(mysql);

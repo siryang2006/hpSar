@@ -8,7 +8,7 @@ int filesystem()
     char caPSCmd[24] = {0};
 #ifdef _HPUX_
 		strcpy(caPSCmd,"bdf");
-		printf("----------------hpUX process------------------\n");    
+//		printf("----------------hpUX process------------------\n");    
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
@@ -44,7 +44,9 @@ int filesystem()
             //hp-ux Filesystem          kbytes    used   avail %used Mounted on
             
             char szName[128] = {0};
+#ifdef __PIPE_DEBUG__
             printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
             char *pTmp = NULL;
             if(NULL == (pTmp=strtok(caStdOutLine, " ")))
             {

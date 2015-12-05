@@ -9,11 +9,11 @@ int hpsar()
     char caStdOutLine[1024] = {0};
     char caPSCmd[24] = {0};
 #ifdef _HPUX_
-		strcpy(caPSCmd,"sar -u 1 1");
-		printf("----------------hpUX sar------------------\n");    
+	strcpy(caPSCmd,"sar -u 1 1");
+	//printf("----------------hpUX sar------------------\n");    
 #else
     printf("not phux\n");
-	exit(0);
+    exit(0);
 #endif
     do
     {
@@ -51,8 +51,10 @@ signal(SIGCHLD, SIG_IGN);
             		return -1;
 		}
             //hp-ux %usr    %sys    %wio   %idle
-            
+#ifdef __PIPE_DEBUG__ 
             printf("1:%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
             char *pTmp = NULL;
             if(NULL == (pTmp=strtok(caStdOutLine, " ")))
             {

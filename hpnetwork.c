@@ -8,7 +8,7 @@ char caStdOutLine[1024] = {0};
     char caPSCmd[24] = {0};
 #ifdef _HPUX_
 		strcpy(caPSCmd,"lanscan");
-		printf("----------------hpUX lanscan ------------------\n");    
+		//printf("----------------hpUX lanscan ------------------\n");    
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
@@ -31,18 +31,26 @@ signal(SIGCHLD, SIG_IGN);
         while (NULL != fgets(caStdOutLine, sizeof(caStdOutLine), fp))
         {
             //hp-ux Filesystem          kbytes    used   avail %used Mounted on
- printf("%s\n", caStdOutLine);
+#ifdef __PIPE_DEBUG__
+ 	printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
 		if(strstr(caStdOutLine, "Path") != NULL || strstr(caStdOutLine, "path") != NULL)
 		{
 			char szName[128] = {0};
+#ifdef __PIPE_DEBUG__
 			    printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
 			    char *pTmp = NULL;
 			    
 			while (NULL != fgets(caStdOutLine, sizeof(caStdOutLine), fp))
 			{
 if(strcmp(caStdOutLine, "\n") ==0)
 {
+#ifdef __PIPE_DEBUG__
 	printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
 	continue;
 }
 				if(NULL == (pTmp=strtok(caStdOutLine, " ")))
@@ -86,7 +94,7 @@ int inout()
     char caPSCmd[24] = {0};
 #ifdef _HPUX_
 		strcpy(caPSCmd,"netstat -i");
-		printf("----------------hpUX lanscan ------------------\n");    
+//		printf("----------------hpUX lanscan ------------------\n");    
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
@@ -110,7 +118,10 @@ char *pTmp = NULL;
         {
 		if(strstr(caStdOutLine, "name") != NULL || strstr(caStdOutLine, "Name") != NULL)
 		{
-printf("%s\n", caStdOutLine);
+#ifdef __PIPE_DEBUG__
+	printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
 continue;
 		}
 char szName[20] = {0};
@@ -188,10 +199,16 @@ signal(SIGCHLD, SIG_IGN);
     char szLine[1024] = {0};
     while(fgets(szLine, 1024, fp) != NULL)
     {
+#ifdef __PIPE_DEBUG__
 	printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
         if((strstr(szLine, "Statistics")||strstr(szLine, "statistics")) && fgets(szLine, 1024, fp) != NULL)
         {
-printf("%s\n", szLine);
+#ifdef __PIPE_DEBUG__
+	printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
             //1 packets transmitted, 1 received, 0% packet loss, time 0ms
             char *pData = NULL;
             pData = strtok(szLine, " ");
@@ -228,7 +245,10 @@ printf("%s\n", szLine);
             {
                 char szMs[20] = {0};
                 strcpy(szMs, pData+5);
-printf("time=%s\n", szMs);
+#ifdef __PIPE_DEBUG__
+	printf("time=%s\n", szMs);
+#endif //__PIPE_DEBUG__
+
                 dTime = atol(szMs);
 		insertKpidataint(111, 1162, dTime, szTime, "socket");
             }
@@ -252,7 +272,10 @@ signal(SIGCHLD, SIG_IGN);
     }
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 	printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
 	if(strcmp(szLine, "\n") == 0)
 	{
 		continue;
@@ -282,7 +305,10 @@ signal(SIGCHLD, SIG_IGN);
     }
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 		printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
 		if(strcmp(szLine, "\n") == 0)
 		{
 			continue;
@@ -312,7 +338,10 @@ signal(SIGCHLD, SIG_IGN);
     }
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 		printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
 		if(strcmp(szLine, "\n") == 0)
 		{
 			continue;
@@ -343,7 +372,10 @@ signal(SIGCHLD, SIG_IGN);
     }
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 		printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
 		if(strcmp(szLine, "\n") == 0)
 		{
 			continue;
@@ -375,7 +407,9 @@ signal(SIGCHLD, SIG_IGN);
     }
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 		printf("%s\n", szLine);
+#endif
 		if(strcmp(szLine, "\n") == 0)
 		{
 			continue;
@@ -420,7 +454,9 @@ signal(SIGCHLD, SIG_IGN);
 char *pTmp = NULL;
 	while(NULL!=(fgets(szLine, sizeof(szLine), fp)))
 	{
+#ifdef __PIPE_DEBUG__
 		printf("%s\n", szLine);
+#endif
 		if(strcmp(szLine, "\n") == 0)
 		{
 			continue;

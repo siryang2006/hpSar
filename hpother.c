@@ -11,7 +11,7 @@ char caStdOutLine[1024] = {0};
 char *pTmp = NULL;
 #ifdef _HPUX_
 		strcpy(caPSCmd,"/usr/contrib/bin/machinfo -v");
-		printf("----------------hpUX mem------------------\n");    
+//		printf("----------------hpUX mem------------------\n");    
 #else
     printf("not phux\n");
 	exit(0);
@@ -32,7 +32,10 @@ signal(SIGCHLD, SIG_IGN);
         {
 if(strstr(caStdOutLine,"OS info:") != NULL)
 {
-printf("%s\n", caStdOutLine);
+#ifdef __PIPE_DEBUG__
+	printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
 	if(NULL == fgets(caStdOutLine, sizeof(caStdOutLine), fp))
 	{
 	 	printf("error parse machinfo result %s\n", caStdOutLine);
@@ -80,7 +83,9 @@ if(NULL == fgets(caStdOutLine, sizeof(caStdOutLine), fp))
 	fclose(fp);
 	return -1;
 }
+#ifdef __PIPE_DEBUG__
 						printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
 						//2 Intel(R) Itanium 2 9000 series processors (1.59 GHz, 18 MB)
 insertKpidatachar(111, 1006, caStdOutLine, szTime, "cpu");
 						
@@ -142,14 +147,18 @@ if(NULL == (pTmp=strtok(NULL, " ")))
                 fclose(fp);
                 return -1;
             }
+#ifdef __PIPE_DEBUG__
 printf("%s\n", pTmp);
+#endif //__PIPE_DEBUG__
             
             insertKpidataint(111, 1005, atof(pTmp), szTime, "cpu");
 					}
 					
 					if(strstr(caStdOutLine, "logical processors") != NULL)
 					{
+#ifdef __PIPE_DEBUG__
 							printf("%s\n", caStdOutLine);
+#endif  //__PIPE_DEBUG__
 						 //4 logical processors (2 per socket)
 						 char *pTmp = NULL;
              if(NULL == (pTmp=strtok(caStdOutLine, " ")))
@@ -172,7 +181,7 @@ int hpmem()
 currentTime(szTime);
 #ifdef _HPUX_
 		strcpy(caPSCmd,"swapinfo -tam");
-		printf("----------------hpUX mem------------------\n");    
+		//printf("----------------hpUX mem------------------\n");    
 #else
     printf("not phux\n");
 	exit(0);
@@ -192,9 +201,11 @@ signal(SIGCHLD, SIG_IGN);
         {
 		if(strstr(caStdOutLine, "dev") != NULL)
 		{
+#ifdef __PIPE_DEBUG__
 			printf("%s\n", caStdOutLine);
 	//hp-ux TYPE      AVAIL    USED    FREE  USED
 		    printf("1:%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
 		    char *pTmp = NULL;
 		    if(NULL == (pTmp=strtok(caStdOutLine, " ")))
 		    {
@@ -253,7 +264,9 @@ signal(SIGCHLD, SIG_IGN);
 		if(strstr(caStdOutLine, "Memory") != NULL || strstr(caStdOutLine, "memory") != NULL)
 		{
 //TYPE      AVAIL    USED    FREE  USED   LIMIT RESERVE  PRI  NAME
+#ifdef __PIPE_DEBUG__
 		     printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
 		    char *pTmp = NULL;
 		    if(NULL == (pTmp=strtok(caStdOutLine, " ")))
 		    {

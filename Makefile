@@ -14,7 +14,8 @@ INCLUDES = -I.. $(MYSQL_INCLUDE_PATH)
 #LIBS=$(MYSQL_LIB_PATH) -lmysqlclient
 #INCLUDES = -I.. $(MYSQL_INCLUDE_PATH) 
 
-DEFINES = -D _HPUX_
+#DEFINES = -D_HPUX_ -D__MYSQL_DEBUG__ -D__PIPE_DEBUG__
+DEFINES = -D_HPUX_
 
 all:	hpsar hpiostat
 

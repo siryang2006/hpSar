@@ -10,4 +10,4 @@ password=hpux-mysql
 database=probe
 
 [warningconfig]
-file=./collectdata.txt
+file=/etc/myprobe/collectdata.txt

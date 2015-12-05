@@ -8,7 +8,7 @@ int iostat(int nTimer)
 #ifdef _HPUX_
 sprintf(caPSCmd, "sar -d %d 1", nTimer);
 		//strcpy(caPSCmd,"sar -d 2 1");
-		printf("----------------hpUX lanscan ------------------\n");    
+//		printf("----------------hpUX lanscan ------------------\n");    
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
@@ -94,7 +94,7 @@ insertKpidataint(111, 1103, atof(pTmp), szTime, szName);
 int main(int argc, char **argv)
 {
 	int interval = GetIniKeyInt("section", "frequencySecond", INI_FILE_REFRESH, 5);
-printf("time=%d\n", interval);
+	//printf("time=%d\n", interval);
     if (0 != init())
     {
         printf("probe init faild!!!\n");

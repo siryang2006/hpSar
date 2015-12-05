@@ -24,7 +24,7 @@ int process()
     char caPSCmd[24] = {0};
 #ifdef _HPUX_
 		strcpy(caPSCmd,"UNIX95= ps -e -o ruser,pid,pcpu,sz,vsz,sz,sid,state,stime,time,args");
-		printf("----------------hpUX process------------------\n");    
+		//printf("----------------hpUX process------------------\n");    
 #else
     strcpy(caPSCmd,"ps -aux  --sort -pcpu");
 #endif
@@ -59,7 +59,10 @@ signal(SIGCHLD, SIG_IGN);
             //hp-ux RUSER PID %CPU  SZ     VSZ   SZ  SID       S   STIME   TIME COMMAND
             
             truPS ps;
+#ifdef __PIPE_DEBUG__
             printf("%s\n", caStdOutLine);
+#endif //__PIPE_DEBUG__
+
             char *pTmp = NULL;
             if(NULL == (pTmp=strtok(caStdOutLine, " ")))
             {
