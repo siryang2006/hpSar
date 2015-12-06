@@ -158,7 +158,6 @@ char caStdOutLine[1024] = {0};
     printf("system error ,hpux!!!!\n");
 	exit(-1);
 return -1;
-return -1;
 #endif
     do
     {

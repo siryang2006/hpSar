@@ -32,7 +32,7 @@ int hpsarCpu()
             fclose(fp);
             return -1;
         }
-	printf("%s\n", caStdOutLine);
+	//printf("%s\n", caStdOutLine);
 
         int nProcessNumber = 0;
         char szTime[32] = {0};
@@ -146,7 +146,7 @@ int hpswapInOut()
             fclose(fp);
             return -1;
         }
-	printf("%s\n", caStdOutLine);
+	//printf("%s\n", caStdOutLine);
 
         int nProcessNumber = 0;
         char szTime[32] = {0};
