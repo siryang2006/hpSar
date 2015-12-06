@@ -10,7 +10,7 @@ char caStdOutLine[1024] = {0};
 	char szTime[32] = {0};
 char *pTmp = NULL;
 #ifdef _HPUX_
-		strcpy(caPSCmd,"/usr/contrib/bin/machinfo -v");
+		strcpy(caPSCmd,"machinfo -v");
 //		printf("----------------hpUX mem------------------\n");    
 #else
     printf("not phux\n");

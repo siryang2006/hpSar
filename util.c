@@ -276,7 +276,7 @@ char* currentTime(char *szTime)
     struct tm *p;
 
     time(&timep); /*获得time_t结构的时间，UTC时间*/
-    p = gmtime(&timep); /*转换为struct tm结构的UTC时间*/
+    p = localtime(&timep); /*转换为struct tm结构的UTC时间*/
     //    sprintf(szTime, "%d-%02d-%02d %d:%d:%d", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday,
     //            p->tm_hour, p->tm_min, p->tm_sec);
     sprintf(szTime, "%02d:%02d:%02d", p->tm_hour, p->tm_min, p->tm_sec);
@@ -416,7 +416,89 @@ char* GetIniKeyString(char* Section,char* Item, char* FileName)
     return "";
 }
 
-int sig_exit(int sig_no)
-{return 0;
+/*删除str左边第一个非空白字符前面的空白字符(空格符和横向制表符)*/
+void ltrim(char *str)
+{
+    int i=0,j,len=strlen(str);
+    while(str[i]!='\0')
+    {
+        if(str[i]!=32&&str[i]!=9)break;/*32:空格,9:横向制表符*/
+        i++;
+    }
+    if(i!=0)
+    for(j=0;j<=len-i;j++)
+    {
+        str[j]=str[j+i];/*将后面的字符顺势前移,补充删掉的空白位置*/
+    }
+}
+/*删除str最后一个非空白字符后面的所有空白字符(空格符和横向制表符)*/
+void rtrim(char *str)
+{
+    char *p=str;
+    int i=strlen(str)-1;
+    while(i>=0)
+    {
+        if(p[i]!=32&&p[i]!=9)break;
+        i--;
+    }
+    str[++i]='\0';
+}
 
+/*删除str两端的空白字符*/
+void trim(char *str)
+{
+    ltrim(str);
+    rtrim(str);
+}
+
+int readIniData(const char *szKeyName, const char *szFileName, char szOut[])
+{
+    int nLen = 0;
+    FILE *pfile = fopen(szFileName, "rb");
+    char szKeyNameEx[128] = {"["};
+    strcat(szKeyNameEx, szKeyName);
+    strcat(szKeyNameEx, "]");
+
+    if(pfile == NULL)
+    {
+        printf("read file %s failed!!!", szFileName);
+        return nLen;
+    }
+
+    char szLine[512] = {0};
+    BOOL bFinded = FALSE;
+    while(fgets(szLine, sizeof(szLine), pfile) != NULL)
+    {
+        ltrim((char*)szLine);
+        if(strlen(szLine)<=0
+                || szLine[0] == '#'
+                || szLine[0] == '\n'
+                || szLine[0] == '\\')
+        {
+            continue;
+        }
+
+        if (szLine[0] == '[' && bFinded == TRUE)
+        {
+            return nLen;
+        }
+
+        if (strstr(szLine, szKeyNameEx))
+        {
+            bFinded = TRUE;
+            continue;
+        }
+
+        if(bFinded == TRUE)
+        {
+            strcat(szOut, szLine);
+            nLen+= strlen(szLine);
+        }
+    }
+    return nLen;
+}
+
+int sig_exit(int sig_no)
+{
+	return 0;
 }

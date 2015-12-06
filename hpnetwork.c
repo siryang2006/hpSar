@@ -2,6 +2,151 @@
 #include <stdlib.h>
 #include "hpnetwork.h"
 #include "util.h"
+int g_ips[128] = {0};
+double getPingTimeOut(const char *szIP);
+
+int str_replace(char* str,char* str_src, char* str_des){
+    char *ptr=NULL;
+    char buff[256];
+    char buff2[256];
+    int i = 0;
+    
+    if(str != NULL){
+        strcpy(buff2, str);
+    }else{
+        printf("str_replace err!/n");
+        return -1;
+    }
+    memset(buff, 0x00, sizeof(buff));
+    while((ptr = strstr( buff2, str_src)) !=0){
+        if(ptr-buff2 != 0) memcpy(&buff[i], buff2, ptr - buff2);
+        memcpy(&buff[i + ptr - buff2], str_des, strlen(str_des));
+        i += ptr - buff2 + strlen(str_des);
+        strcpy(buff2, ptr + strlen(str_src));
+    }
+    strcat(buff,buff2);
+    strcpy(str,buff);
+    return 0;
+}
+
+int initNetWork()
+{
+    static char szPortTime[2048] = {0};
+    if(0<readIniData("PortTime", INI_FILE_EX, szPortTime))
+    {
+        char *p = strtok(szPortTime, "\n");
+	str_replace(p, ":", " ");
+        g_ips[0] = (int)p;
+	
+	int nIndex = 1;
+        while((p=strtok(NULL, "\n"))!=NULL)
+        {
+            g_ips[nIndex] = (int)p;
+            str_replace(p, ":", " ");
+            nIndex++;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+int pingTimeOut()
+{
+	char szTime[32] = {0};
+    	currentTime(szTime);
+	int i=0;
+	for(i=0; i<128; i++)
+	{
+		if(g_ips[i] == 0)
+		{
+			return 1;
+		}
+		double d = getPingTimeOut(g_ips[i]);
+		insertKpidataint(111, 1160, d, szTime, g_ips[i]);//ping,包成功率
+	}
+	return 0;
+}
+
+double getPingTimeOut(const char *szIP)
+{
+    char szCmd[128] = {0};
+    strcpy(szCmd, "ping ");
+    strcat(szCmd, szIP);
+    strcat(szCmd, " -n 1");
+    signal(SIGCHLD, SIG_IGN);
+    FILE* fp = popen(szCmd, // 一个指向以 NULL 结束的 shell 命令字符串的指针，
+                     // 这行命令将被传到 bin/sh 并使用 -c 标志，
+                     // 那么 shell 将执行这个命令从这个字符串中读取。
+                     "r" );  // 文件指针连接到 shell 命令的标准输出
+    if ( NULL == fp )
+    {
+        printf( "ping error :call popen is failed!!!! \n" );
+        return -1;
+    }
+
+    char szTime[32] = {0};
+    currentTime(szTime);
+
+    char szLine[1024] = {0};
+    while(fgets(szLine, 1024, fp) != NULL)
+    {
+#ifdef __PIPE_DEBUG__
+	printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
+        if((strstr(szLine, "Statistics")||strstr(szLine, "statistics")) && fgets(szLine, 1024, fp) != NULL)
+        {
+#ifdef __PIPE_DEBUG__
+	printf("%s\n", szLine);
+#endif //__PIPE_DEBUG__
+
+            //1 packets transmitted, 1 received, 0% packet loss, time 0ms
+            char *pData = NULL;
+            pData = strtok(szLine, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            if(pData != NULL && pData[strlen(pData)-1] == '%')
+            {
+                pData[strlen(pData)-1] = '\0';
+            }
+            insertKpidataint(111, 1161, 100.0-atof(pData), szTime, "socket");//ping,包成功率
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+
+            
+            //return 0;
+        }
+	else if(strstr(szLine, "from"))
+        {
+	    char *pData = NULL;
+            pData = strtok(szLine, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+            pData = strtok(NULL, " ");
+
+	    double dTime = -1;
+            if(pData != NULL && strstr(pData, "time="))
+            {
+                char szMs[20] = {0};
+                strcpy(szMs, pData+5);
+#ifdef __PIPE_DEBUG__
+	printf("time=%s\n", szMs);
+#endif //__PIPE_DEBUG__
+
+                return atol(szMs);	
+            }
+	}
+    }
+    return -1;
+}
+
 int netAdaptor()
 {
 char caStdOutLine[1024] = {0};
@@ -12,10 +157,12 @@ char caStdOutLine[1024] = {0};
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
+return -1;
+return -1;
 #endif
     do
     {
-signal(SIGCHLD, SIG_IGN);
+	signal(SIGCHLD, SIG_IGN);
         FILE* fp = popen(caPSCmd,  "r" );
         if (NULL == fp)
         {
@@ -98,6 +245,7 @@ int inout()
 #else
     printf("system error ,hpux!!!!\n");
 	exit(-1);
+	return -1;
 #endif
     do
     {
@@ -180,8 +328,8 @@ int ping(const char *szIP)
     char szCmd[128] = {0};
     strcpy(szCmd, "ping ");
     strcat(szCmd, szIP);
-strcat(szCmd, " -n 1");
-signal(SIGCHLD, SIG_IGN);
+	strcat(szCmd, " -n 1");
+	signal(SIGCHLD, SIG_IGN);
     FILE* fp = popen(szCmd, // 一个指向以 NULL 结束的 shell 命令字符串的指针，
                      // 这行命令将被传到 bin/sh 并使用 -c 标志，
                      // 那么 shell 将执行这个命令从这个字符串中读取。
@@ -189,7 +337,6 @@ signal(SIGCHLD, SIG_IGN);
     if ( NULL == fp )
     {
         printf( "ping error :call popen is failed!!!! \n" );
-        sleep(10);
         return -1;
     }
 
@@ -501,5 +648,6 @@ int network()
 socketConnectedFINNumber();
 socketCreateRatio();
 portIsOpen();
+pingTimeOut();
 	return 0;    
 }

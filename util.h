@@ -25,6 +25,7 @@ typedef char BOOL;
 #define KPIID_MIN 1000
 #define MAXK_PIID_NUMBER 1024
 #define INI_FILE "/etc/myprobe/config.txt"
+#define INI_FILE_EX "/etc/myprobe/configex.txt"
 
 extern MYSQL *mysql;
 extern BOOL g_isCollect[1024];
@@ -55,6 +56,6 @@ int insertPolicyalarm(const char *message,
 //int connect_db(const char* host, int nPort, const char* szDatabase, const char* user, const char* passwd);
 void disconnect_db(void);
 int getFrequencySecond();
-int pclose(FILE *stream);
+int readIniData(const char *szKeyName, const char *szFileName, char szOut[]);
 
 #endif // UTIL_H

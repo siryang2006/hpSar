@@ -2,6 +2,7 @@
 #include "hpsar.h"
 #include "util.h"
 #include "hpnetwork.h"
+#include "hplogfile.h"
 int main(int argc, char **argv)
 {
 int interval = getFrequencySecond();
@@ -11,6 +12,9 @@ int interval = getFrequencySecond();
         return -1;
     }
     
+	initProcess();
+	initNetWork();
+	initLogFile();
 	cpuInfo();
 
 	while(1)
@@ -20,6 +24,7 @@ int interval = getFrequencySecond();
 		hpsar();
 		filesystem();
 		network();
+		doLogFile();
 		sleep(interval);	
 	}
 	disconnect_db();
