@@ -1,0 +1,13 @@
+[section]
+frequencySecond = 1
+deviceID = 10001
+
+[mysql]
+server=192.168.1.53
+port=3306
+username=root
+password=htrd@123456
+database=monitordb
+
+[warningconfig]
+file=/etc/myprobe/collectdata.txt
